@@ -21,7 +21,7 @@ Buttons are macOS 0-indexed: 3 = back, 4 = forward. Set `"debug": true` to log t
 
 ## Status (2026-10-22)
 - [x] v1.0.0 tagged locally; stable signing; curl one-line install
-- [ ] Publish to GitHub (`willosullivan/mousenav`, public). Waiting on Will's go-ahead
+- [x] Published: https://github.com/willosullivan/mousenav (2026-10-22)
 - [ ] Homebrew tap (only if people use it)
 - [x] Back/forward: ⌘[ / ⌘] by default; native passthrough for Chromium browsers and Firefox; ⌃- / ⌃⇧- in VS Code and Cursor
 - [ ] Gesture button / thumb wheel. Over Bluetooth these may need Logitech's own protocol (HID++) rather than standard mouse events. Check with debug mode first.
