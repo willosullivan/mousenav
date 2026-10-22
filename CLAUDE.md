@@ -11,7 +11,7 @@ Personal macOS utility: remaps extra mouse buttons (MX Master 3S) to keystrokes 
 | Path | Purpose |
 |---|---|
 | `Sources/main.swift` | Event tap, config loader, actions |
-| `install.sh` | Build → `~/Applications/MouseNav.app`, ad-hoc sign, LaunchAgent `com.asa.mousenav` |
+| `install.sh` | Build → `~/Applications/MouseNav.app`, sign (local identity or ad-hoc), LaunchAgent `com.asa.mousenav` |
 | `~/.config/mousenav/config.json` | Live config (re-read on the next click after a change) |
 | `~/Library/Logs/mousenav.log` | Logs |
 
@@ -22,6 +22,8 @@ Buttons are macOS 0-indexed: 3 = back, 4 = forward. Set `"debug": true` to log t
 ## Status (2026-10-22)
 - [x] v1.0.0 tagged locally; stable signing; curl one-line install
 - [x] Published: https://github.com/willosullivan/mousenav (2026-10-22)
+- [x] Hot-path optimisation: 23 µs → 0.04 µs per click, 6.2 → 4.5 MB (2026-10-22). Benchmark: `MouseNav --bench [button] [n]`. Keep the click path free of I/O and string work
+- [ ] Verify per-app switching on real clicks (VS Code vs Finder) after the notification-based rewrite
 - [ ] Homebrew tap (only if people use it)
 - [x] Back/forward: ⌘[ / ⌘] by default; native passthrough for Chromium browsers and Firefox; ⌃- / ⌃⇧- in VS Code and Cursor
 - [ ] Gesture button / thumb wheel. Over Bluetooth these may need Logitech's own protocol (HID++) rather than standard mouse events. Check with debug mode first.

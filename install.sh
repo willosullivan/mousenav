@@ -57,6 +57,7 @@ cat > "$PLIST" <<EOF
   <key>RunAtLoad</key><true/>
   <key>KeepAlive</key><true/>
   <key>ThrottleInterval</key><integer>10</integer>
+  <key>ProcessType</key><string>Interactive</string>
   <key>StandardErrorPath</key><string>$HOME/Library/Logs/mousenav.log</string>
 </dict></plist>
 EOF

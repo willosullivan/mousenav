@@ -1,15 +1,37 @@
 # MouseNav
 
-Make your mouse's back/forward buttons work on macOS, in every app, with **one ~140-line Swift file**.
+Back/forward mouse buttons for macOS, configured in a text file, in ~235 lines of Swift you can read before you install.
 
-No Logitech Options+, no account, no menu bar clutter, no network access, no telemetry.
+**Built for people who keep their setup in dotfiles and let an AI agent edit them.** Every behaviour lives in one JSON file, so you can version it, copy it to a new Mac, or tell Claude *"make the back button close the tab in Slack"* and it just edits the file. There's no settings window to click through.
 
-| | MouseNav |
+## Why this one
+
+| | |
 |---|---|
-| Memory | ~14 MB |
-| CPU when idle | 0% (only wakes on side-button clicks, never on mouse movement) |
-| Binary | ~125 KB |
-| Code you can read | 1 file, ~140 lines |
+| **Config as code** | One JSON file. Changes apply instantly, with no restart. Agents can edit it; GUI-only mouse apps can't be driven that way |
+| **Invisible** | No window, no menu bar icon, no account, no network access, no telemetry, no updater |
+| **Minimal access** | It only listens for extra mouse button clicks. It never sees mouse movement, scrolling or keystrokes |
+| **Per-app** | A different shortcut or shell command for each app, e.g. ⌃- in VS Code, untouched in Chrome |
+| **Auditable** | One source file, built on your machine from source. No pre-built binary to trust |
+
+## Performance
+
+Measured on an Apple Silicon Mac (macOS 15). Reproduce with `~/Applications/MouseNav.app/Contents/MacOS/MouseNav --bench`.
+
+| | |
+|---|---|
+| Time to handle a click | **~40 ns** median, under 8 µs worst case (excludes sending the keystroke) |
+| CPU when idle | **0%**. The process sleeps until a side button is pressed |
+| Memory | **~4.5 MB** physical footprint |
+| Binary | ~150 KB |
+
+How: settings are compiled into a lookup table when the file changes, and the active app is tracked when you switch apps, not when you click. A click does one array lookup: no file checks, no text parsing, no system calls.
+
+## Use something else if…
+
+- **You want a settings window**: [LinearMouse](https://linearmouse.app) (free, open source)
+- **You want smooth scrolling or click-and-drag gestures**: [Mac Mouse Fix](https://macmousefix.com)
+- **You need the MX Master gesture button or thumb wheel fully customised**: Logitech Options+
 
 Works with any mouse that has side buttons (built and tested on a Logitech MX Master 3S over Bluetooth).
 
@@ -69,7 +91,7 @@ tail -f ~/Library/Logs/mousenav.log                    # logs
 
 ## How it works
 
-A `CGEventTap` that only listens for "other mouse button" events, so it never sees mouse movement or keystrokes. When a mapped button is pressed in the frontmost app, it swallows the click and sends the configured keystroke instead. A LaunchAgent keeps it running.
+A `CGEventTap` that only listens for "other mouse button" events, so it never sees mouse movement or keystrokes. When a mapped button is pressed, it swallows the click and sends the configured keystroke instead. Settings reload via file-system events (kqueue), the frontmost app is tracked via workspace notifications, and a LaunchAgent (`ProcessType: Interactive`, so macOS doesn't deprioritise it) keeps it running.
 
 **Note:** builds are ad-hoc signed by default, so macOS forgets the Accessibility approval after each rebuild or update. If it stops working, remove MouseNav from the Accessibility list and add it again. To avoid this on your own machine, create a self-signed code-signing certificate named `MouseNav Local Signing` in your login keychain. `install.sh` uses it automatically, and the approval then survives rebuilds.
 
