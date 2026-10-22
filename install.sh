@@ -36,6 +36,7 @@ EOF
 codesign --force --sign - --identifier "$LABEL" "$APP"
 
 [[ -f $CONFIG ]] || cp config.example.json "$CONFIG"
+rm -f ~/.config/mousenav/.prompted  # let the new build show the permission prompt once
 
 cat > "$PLIST" <<EOF
 <?xml version="1.0" encoding="UTF-8"?>

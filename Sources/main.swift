@@ -122,7 +122,11 @@ reloadConfigIfChanged()
 let promptKey = kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String
 // The trust check is cached for the life of the process, so polling never sees a later grant.
 // Exit instead and let launchd relaunch us (ThrottleInterval) until permission is granted.
-if !AXIsProcessTrustedWithOptions([promptKey: true] as CFDictionary) {
+// Only show the system prompt once per install (install.sh clears the marker), not on every relaunch.
+let promptedMarker = configURL.deletingLastPathComponent().appendingPathComponent(".prompted")
+let shouldPrompt = !FileManager.default.fileExists(atPath: promptedMarker.path)
+if !AXIsProcessTrustedWithOptions([promptKey: shouldPrompt] as CFDictionary) {
+    if shouldPrompt { FileManager.default.createFile(atPath: promptedMarker.path, contents: nil) }
     log("waiting for Accessibility permission (System Settings → Privacy & Security → Accessibility)")
     Thread.sleep(forTimeInterval: 5)
     exit(1)
