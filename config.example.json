@@ -1,0 +1,16 @@
+{
+  "debug": false,
+  "default": {
+    "3": "cmd+[",
+    "4": "cmd+]"
+  },
+  "apps": {
+    "com.google.Chrome": { "3": "passthrough", "4": "passthrough" },
+    "company.thebrowser.Browser": { "3": "passthrough", "4": "passthrough" },
+    "com.brave.Browser": { "3": "passthrough", "4": "passthrough" },
+    "com.microsoft.edgemac": { "3": "passthrough", "4": "passthrough" },
+    "org.mozilla.firefox": { "3": "passthrough", "4": "passthrough" },
+    "com.microsoft.VSCode": { "3": "ctrl+-", "4": "ctrl+shift+-" },
+    "com.todesktop.230313mzl4w4u92": { "3": "ctrl+-", "4": "ctrl+shift+-" }
+  }
+}
