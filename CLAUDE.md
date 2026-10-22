@@ -3,7 +3,8 @@
 Personal macOS utility: remaps extra mouse buttons (MX Master 3S) to keystrokes or shell commands, per app. Replaces Logi Options+ / LinearMouse.
 
 ## Constraints
-- Needs **Accessibility** permission. Ad-hoc signing means **every rebuild can reset that permission**, so prefer config changes over code changes.
+- Needs **Accessibility** permission. On Will's Mac, builds are signed with the keychain identity `MouseNav Local Signing` (self-signed, expires 2036), so the permission survives rebuilds (verified 2026-10-22 with a changed binary). Without that identity, builds fall back to ad-hoc signing and every rebuild resets the permission.
+- If the permission gets stuck: `tccutil reset Accessibility com.asa.mousenav && rm ~/.config/mousenav/.prompted && launchctl kickstart -k gui/$(id -u)/com.asa.mousenav`, then approve the single prompt.
 - `install.sh` works around a CLT 16.4 modulemap bug with a VFS overlay (see ~/.claude/ERROR_LEARNINGS.md).
 
 ## Layout
@@ -19,5 +20,8 @@ Personal macOS utility: remaps extra mouse buttons (MX Master 3S) to keystrokes 
 Buttons are macOS 0-indexed: 3 = back, 4 = forward. Set `"debug": true` to log the button number and frontmost bundle ID on each click.
 
 ## Status (2026-10-22)
+- [x] v1.0.0 tagged locally; stable signing; curl one-line install
+- [ ] Publish to GitHub (`willosullivan/mousenav`, public). Waiting on Will's go-ahead
+- [ ] Homebrew tap (only if people use it)
 - [x] Back/forward: ⌘[ / ⌘] by default; native passthrough for Chromium browsers and Firefox; ⌃- / ⌃⇧- in VS Code and Cursor
 - [ ] Gesture button / thumb wheel. Over Bluetooth these may need Logitech's own protocol (HID++) rather than standard mouse events. Check with debug mode first.
