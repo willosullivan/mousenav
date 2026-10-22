@@ -1,7 +1,14 @@
 #!/bin/zsh
 # Build MouseNav.app, install the LaunchAgent, seed config. Safe to re-run.
 set -euo pipefail
-cd "${0:A:h}"
+# Piped via `curl … | zsh` there's no checkout, so fetch the source into a temp dir first.
+if [[ -f "${0:A:h}/Sources/main.swift" ]]; then
+  cd "${0:A:h}"
+else
+  SRC=$(mktemp -d)
+  curl -fsSL https://github.com/willosullivan/mousenav/archive/refs/heads/main.tar.gz | tar -xz -C "$SRC" --strip-components 1
+  cd "$SRC"
+fi
 
 APP=~/Applications/MouseNav.app
 LABEL=com.asa.mousenav
@@ -33,7 +40,10 @@ cat > "$APP/Contents/Info.plist" <<EOF
   <key>LSUIElement</key><true/>
 </dict></plist>
 EOF
-codesign --force --sign - --identifier "$LABEL" "$APP"
+# Ad-hoc signatures change every build, so macOS drops the Accessibility grant on rebuild.
+# A stable "MouseNav Local Signing" identity in the keychain keeps the grant (see README).
+IDENTITY=$(security find-identity -p codesigning 2>/dev/null | awk '/"MouseNav Local Signing"/ {print $2; exit}')
+codesign --force --sign "${IDENTITY:--}" --identifier "$LABEL" "$APP"
 
 [[ -f $CONFIG ]] || cp config.example.json "$CONFIG"
 rm -f ~/.config/mousenav/.prompted  # let the new build show the permission prompt once

@@ -18,9 +18,12 @@ Works with any mouse that has side buttons (built and tested on a Logitech MX Ma
 Needs the Xcode Command Line Tools (`xcode-select --install`). You build it yourself from source, so there's nothing pre-built for macOS to block.
 
 ```sh
-git clone https://github.com/willosullivan/mousenav.git
-cd mousenav && ./install.sh
+curl -fsSL https://raw.githubusercontent.com/willosullivan/mousenav/main/install.sh | zsh
 ```
+
+Or with Claude Code (or any coding agent): *"Install github.com/willosullivan/mousenav"*. The agent reads this README and runs the line above.
+
+Or from a clone: `git clone https://github.com/willosullivan/mousenav.git && cd mousenav && ./install.sh`
 
 Then turn on **MouseNav** in **System Settings → Privacy & Security → Accessibility**. It starts within about 10 seconds and launches at login from then on.
 
@@ -68,7 +71,7 @@ tail -f ~/Library/Logs/mousenav.log                    # logs
 
 A `CGEventTap` that only listens for "other mouse button" events, so it never sees mouse movement or keystrokes. When a mapped button is pressed in the frontmost app, it swallows the click and sends the configured keystroke instead. A LaunchAgent keeps it running.
 
-**Note:** each rebuild changes the binary's signature, so macOS may forget the Accessibility approval. If it stops working after `./install.sh`, remove MouseNav from the Accessibility list and add it again.
+**Note:** builds are ad-hoc signed by default, so macOS forgets the Accessibility approval after each rebuild or update. If it stops working, remove MouseNav from the Accessibility list and add it again. To avoid this on your own machine, create a self-signed code-signing certificate named `MouseNav Local Signing` in your login keychain. `install.sh` uses it automatically, and the approval then survives rebuilds.
 
 ## License
 
